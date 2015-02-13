@@ -22,7 +22,7 @@ namespace cocosbuilder {
 
 void Scale9SpriteLoader::onHandlePropTypeSpriteFrame(Node * pNode, Node * pParent, const char * pPropertyName, SpriteFrame * pSpriteFrame, CCBReader * ccbReader) {
     if(strcmp(pPropertyName, PROPERTY_SPRITEFRAME) == 0) {
-        ((Scale9Sprite *)pNode)->setSpriteFrame(pSpriteFrame);
+        ((cocos2d::ui::Scale9Sprite *)pNode)->setSpriteFrame(pSpriteFrame);
     } else {
         NodeLoader::onHandlePropTypeSpriteFrame(pNode, pParent, pPropertyName, pSpriteFrame, ccbReader);
     }
@@ -30,7 +30,7 @@ void Scale9SpriteLoader::onHandlePropTypeSpriteFrame(Node * pNode, Node * pParen
 
 void Scale9SpriteLoader::onHandlePropTypeColor3(Node * pNode, Node * pParent, const char * pPropertyName, Color3B pColor3B, CCBReader * ccbReader) {
     if(strcmp(pPropertyName, PROPERTY_COLOR) == 0) {
-        ((Scale9Sprite *)pNode)->setColor(pColor3B);
+        ((cocos2d::ui::Scale9Sprite *)pNode)->setColor(pColor3B);
     } else {
         NodeLoader::onHandlePropTypeColor3(pNode, pParent, pPropertyName, pColor3B, ccbReader);
     }
@@ -38,7 +38,7 @@ void Scale9SpriteLoader::onHandlePropTypeColor3(Node * pNode, Node * pParent, co
 
 void Scale9SpriteLoader::onHandlePropTypeByte(Node * pNode, Node * pParent, const char * pPropertyName, unsigned char pByte, CCBReader * ccbReader) {
     if(strcmp(pPropertyName, PROPERTY_OPACITY) == 0) {
-        ((Scale9Sprite *)pNode)->setOpacity(pByte);
+        ((cocos2d::ui::Scale9Sprite *)pNode)->setOpacity(pByte);
     } else {
         NodeLoader::onHandlePropTypeByte(pNode, pParent, pPropertyName, pByte, ccbReader);
     }
@@ -55,9 +55,9 @@ void Scale9SpriteLoader::onHandlePropTypeBlendFunc(Node * pNode, Node * pParent,
 
 void Scale9SpriteLoader::onHandlePropTypeSize(Node * pNode, Node * pParent, const char * pPropertyName, Size pSize, CCBReader * ccbReader) {
     if(strcmp(pPropertyName, PROPERTY_CONTENTSIZE) == 0) {
-        ((Scale9Sprite *)pNode)->setPreferredSize(pSize);
+        ((cocos2d::ui::Scale9Sprite *)pNode)->setPreferredSize(pSize);
     } else if(strcmp(pPropertyName, PROPERTY_PREFEREDSIZE) == 0) {
-        ((Scale9Sprite *)pNode)->setPreferredSize(pSize);
+        ((cocos2d::ui::Scale9Sprite *)pNode)->setPreferredSize(pSize);
     } else {
         NodeLoader::onHandlePropTypeSize(pNode, pParent, pPropertyName, pSize, ccbReader);
     }
@@ -65,13 +65,13 @@ void Scale9SpriteLoader::onHandlePropTypeSize(Node * pNode, Node * pParent, cons
 
 void Scale9SpriteLoader::onHandlePropTypeFloat(Node * pNode, Node * pParent, const char * pPropertyName, float pFloat, CCBReader * ccbReader) {
     if(strcmp(pPropertyName, PROPERTY_INSETLEFT) == 0) {
-        ((Scale9Sprite *)pNode)->setInsetLeft(pFloat);
+        ((cocos2d::ui::Scale9Sprite *)pNode)->setInsetLeft(pFloat);
     } else if(strcmp(pPropertyName, PROPERTY_INSETTOP) == 0) {
-        ((Scale9Sprite *)pNode)->setInsetTop(pFloat);
+        ((cocos2d::ui::Scale9Sprite *)pNode)->setInsetTop(pFloat);
     } else if(strcmp(pPropertyName, PROPERTY_INSETRIGHT) == 0) {
-        ((Scale9Sprite *)pNode)->setInsetRight(pFloat);
+        ((cocos2d::ui::Scale9Sprite *)pNode)->setInsetRight(pFloat);
     } else if(strcmp(pPropertyName, PROPERTY_INSETBOTTOM) == 0) {
-        ((Scale9Sprite *)pNode)->setInsetBottom(pFloat);
+        ((cocos2d::ui::Scale9Sprite *)pNode)->setInsetBottom(pFloat);
     } else {
         NodeLoader::onHandlePropTypeFloat(pNode, pParent, pPropertyName, pFloat, ccbReader);
     }
@@ -80,13 +80,13 @@ void Scale9SpriteLoader::onHandlePropTypeFloat(Node * pNode, Node * pParent, con
     void Scale9SpriteLoader::onHandlePropTypeInteger(cocos2d::Node * pNode, cocos2d::Node * pParent, const char* pPropertyName, int pInteger, CCBReader * ccbReader)
     {
         if(strcmp(pPropertyName, PROPERTY_MARGINLEFT) == 0) {
-            ((Scale9Sprite *)pNode)->setInsetLeft(pInteger);
+            ((cocos2d::ui::Scale9Sprite *)pNode)->setInsetLeft(pInteger);
         } else if(strcmp(pPropertyName, PROPERTY_MARGINTOP) == 0) {
-            ((Scale9Sprite *)pNode)->setInsetTop(pInteger);
+            ((cocos2d::ui::Scale9Sprite *)pNode)->setInsetTop(pInteger);
         } else if(strcmp(pPropertyName, PROPERTY_MARGINRIGHT) == 0) {
-            ((Scale9Sprite *)pNode)->setInsetRight(pInteger);
+            ((cocos2d::ui::Scale9Sprite *)pNode)->setInsetRight(pInteger);
         } else if(strcmp(pPropertyName, PROPERTY_MARGINBOTTOM) == 0) {
-            ((Scale9Sprite *)pNode)->setInsetBottom(pInteger);
+            ((cocos2d::ui::Scale9Sprite *)pNode)->setInsetBottom(pInteger);
         } else {
             NodeLoader::onHandlePropTypeInteger(pNode, pParent, pPropertyName, pInteger, ccbReader);
         }

@@ -10,9 +10,9 @@
 
 namespace cocosbuilder {
     
-    cocos2d::extension::EditBox * EditBoxLoader::createNode(cocos2d::Node * pParent, cocosbuilder::CCBReader * ccbReader)
+    cocos2d::ui::EditBox * EditBoxLoader::createNode(cocos2d::Node * pParent, cocosbuilder::CCBReader * ccbReader)
     {
-        cocos2d::extension::EditBox* pNode = cocos2d::extension::EditBox::create(cocos2d::Size::ZERO, nullptr);
+        cocos2d::ui::EditBox* pNode = cocos2d::ui::EditBox::create(cocos2d::Size::ZERO, nullptr);
         
         //pNode->setAnchorPoint(cocos2d::Point(0.5,0.5));
         
@@ -20,7 +20,7 @@ namespace cocosbuilder {
     }
     
     void EditBoxLoader::onHandlePropTypeBlock(cocos2d::Node * pNode, cocos2d::Node * pParent, const char * pPropertyName, BlockData * pBlockData, CCBReader * ccbReader) {
-        ControlLoader::onHandlePropTypeBlockControl(pNode, pParent, pPropertyName, (BlockControlData*)pBlockData, ccbReader);
+        NodeLoader::onHandlePropTypeBlockControl(pNode, pParent, pPropertyName, (BlockControlData*)pBlockData, ccbReader);
     }
     
     
@@ -31,21 +31,21 @@ namespace cocosbuilder {
             const cocos2d::Point pos = pNode->getPosition();
             if (pSpriteFrame != nullptr)
             {
-                ((cocos2d::extension::EditBox*)pNode)->setBackgroundSprite(cocos2d::extension::Scale9Sprite::createWithSpriteFrame(pSpriteFrame));
+                //((cocos2d::ui::EditBox*)pNode)->setBackgroundSprite(cocos2d::ui::Scale9Sprite::createWithSpriteFrame(pSpriteFrame));
             }
             
             //pNode->setPosition(pos);
         } else {
-            ControlLoader::onHandlePropTypeSpriteFrame(pNode, pParent, pPropertyName, pSpriteFrame, ccbReader);
+            NodeLoader::onHandlePropTypeSpriteFrame(pNode, pParent, pPropertyName, pSpriteFrame, ccbReader);
         }
     }
     
     void EditBoxLoader::onHandlePropTypeSize(cocos2d::Node * pNode, cocos2d::Node * pParent, const char * pPropertyName, cocos2d::Size pSize, CCBReader * ccbReader)
     {
         if (strcmp(pPropertyName, "preferredSize") == 0) {
-             ((cocos2d::extension::EditBox*)pNode)->setPreferredSize(pSize);
+             //((cocos2d::ui::EditBox*)pNode)->setPreferredSize(pSize);
         } else {
-            ControlLoader::onHandlePropTypeSize(pNode, pParent, pPropertyName, pSize, ccbReader);
+            NodeLoader::onHandlePropTypeSize(pNode, pParent, pPropertyName, pSize, ccbReader);
         }
     }
     
@@ -54,16 +54,16 @@ namespace cocosbuilder {
         if (strcmp(pPropertyName, "padding") == 0) {
             
         } else {
-            ControlLoader::onHandlePropTypeFloatScale(pNode, pParent, pPropertyName, pFloatScale, ccbReader);
+            NodeLoader::onHandlePropTypeFloatScale(pNode, pParent, pPropertyName, pFloatScale, ccbReader);
         }
     }
     
     void EditBoxLoader::onHandlePropTypeFloat(cocos2d::Node * pNode, cocos2d::Node * pParent, const char* pPropertyName, float theFloat, CCBReader * ccbReader)
     {
         if (strcmp(pPropertyName, "fontSize") == 0) {
-            ((cocos2d::extension::EditBox*)pNode)->setFontSize(theFloat);
+            ((cocos2d::ui::EditBox*)pNode)->setFontSize(theFloat);
         } else {
-            ControlLoader::onHandlePropTypeFloat(pNode, pParent, pPropertyName, theFloat, ccbReader);
+            NodeLoader::onHandlePropTypeFloat(pNode, pParent, pPropertyName, theFloat, ccbReader);
         }
     }
     

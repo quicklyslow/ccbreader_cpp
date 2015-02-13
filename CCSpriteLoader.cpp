@@ -4,6 +4,7 @@ using namespace cocos2d;
 
 #define PROPERTY_FLIP "flip"
 #define PROPERTY_DISPLAYFRAME "spriteFrame"
+#define PROPERTY_NORMALMAP_SPRITEFRAME "normalMapSpriteFrame"
 #define PROPERTY_COLOR "color"
 #define PROPERTY_OPACITY "opacity"
 #define PROPERTY_BLENDFUNC "blendFunc"
@@ -15,6 +16,8 @@ void SpriteLoader::onHandlePropTypeSpriteFrame(Node * pNode, Node * pParent, con
         if(pSpriteFrame != nullptr) {
             ((Sprite *)pNode)->setSpriteFrame(pSpriteFrame);
         }
+    } else if(strcmp(pPropertyName, PROPERTY_NORMALMAP_SPRITEFRAME) == 0) {
+        
     } else {
         NodeLoader::onHandlePropTypeSpriteFrame(pNode, pParent, pPropertyName, pSpriteFrame, ccbReader);
     }

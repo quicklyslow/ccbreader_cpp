@@ -25,7 +25,7 @@ namespace cocosbuilder {
 	{
 		if (strcmp(pPropertyName, PROPERTY_SHADOW_OFFSET) == 0)
 		{
-            ((Label *)pNode)->enableShadowOffset(Size(pPosition.x, pPosition.y));
+            //((Label *)pNode)->enableShadowOffset(Size(pPosition.x, pPosition.y));
 		}
 		else
 		{
@@ -90,9 +90,9 @@ void LabelTTFLoader::onHandlePropTypeFloatScale(Node * pNode, Node * pParent, co
     if(strcmp(pPropertyName, PROPERTY_FONTSIZE) == 0) {
         ((Label *)pNode)->setSystemFontSize(pFloatScale);
 	} else if (strcmp(pPropertyName, PROPERTY_OUTLINE_WIDTH) == 0) {
-        ((Label *)pNode)->enableOutlineWithSize(pFloatScale);
+        //((Label *)pNode)->enableOutlineWithSize(pFloatScale);
 	} else if (strcmp(pPropertyName, PROPERTY_SHADOW_BLUR_RADIUS) == 0) {
-        ((Label *)pNode)->enableShadowBlurRadius(pFloatScale);
+        //((Label *)pNode)->enableShadowBlurRadius(pFloatScale);
 	} else {
         NodeLoader::onHandlePropTypeFloatScale(pNode, pParent, pPropertyName, pFloatScale, ccbReader);
     }

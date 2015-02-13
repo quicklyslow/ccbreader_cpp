@@ -11,20 +11,20 @@
 #define __cocos2d_libs__CCEditboxLoader__
 
 #include "CCControlLoader.h"
-#include "extensions/GUI/CCEditBox/CCEditBox.h"
+#include "UIEditBox.h"
 
 namespace cocosbuilder {
     /* Forward declaration. */
     class CCBReader;
     
-    class EditBoxLoader : public ControlLoader {
+    class EditBoxLoader : public NodeLoader {
     public:
         virtual ~EditBoxLoader() {};
         
         CCB_STATIC_NEW_AUTORELEASE_OBJECT_METHOD(EditBoxLoader, loader);
     protected:
         
-        virtual cocos2d::extension::EditBox * createNode(cocos2d::Node * pParent, cocosbuilder::CCBReader * ccbReader);
+        virtual cocos2d::ui::EditBox * createNode(cocos2d::Node * pParent, cocosbuilder::CCBReader * ccbReader);
         
         virtual void onHandlePropTypeBlock(cocos2d::Node * pNode, cocos2d::Node * pParent, const char * pPropertyName, BlockData * pBlockData, CCBReader * ccbReader);
         

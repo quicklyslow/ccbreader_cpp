@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 #include "2d/CCNode.h"
 #include "base/CCData.h"
 #include "base/CCMap.h"
@@ -30,7 +31,7 @@
     return NULL; \
 }
 
-#define CCB_VERSION 7U
+#define CCB_VERSION 10U
 
 namespace cocosbuilder {
 
@@ -97,7 +98,11 @@ public:
         BLOCK_CONTROL,
         FLOAT_SCALE,
         FLOAT_XY,
-		COLOR4
+		COLOR4,
+        NODE_REFERENCE,
+        FLOAT_CHECK,
+        EFFECTS,
+        TOKEN_ARRAY,
     };
     
     enum class FloatType {
@@ -265,6 +270,7 @@ public:
      * @lua NA
      */
     int readInt(bool pSigned);
+    int readIntOLD(bool pSigned);
     /**
      * @js NA
      * @lua NA

@@ -109,6 +109,7 @@ class NodeLoader : public cocos2d::Ref {
         virtual BlockData * parsePropTypeBlock(cocos2d::Node * pNode, cocos2d::Node * pParent, CCBReader * ccbReader);
         virtual BlockControlData * parsePropTypeBlockControl(cocos2d::Node * pNode, cocos2d::Node * pParent, CCBReader * ccbReader);
         virtual cocos2d::Node * parsePropTypeCCBFile(cocos2d::Node * pNode, cocos2d::Node * pParent, CCBReader * ccbReader);
+        virtual cocos2d::Node * parseProptypeNodeReference(cocos2d::Node * pNode, cocos2d::Node * pParent, CCBReader * ccbReader);
         virtual float * parsePropTypeFloatXY(cocos2d::Node * pNode, cocos2d::Node * pParent, CCBReader * ccbReader);
 
 

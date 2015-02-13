@@ -11,10 +11,6 @@ using namespace std;
 using namespace cocos2d;
 using namespace cocos2d::extension;
 
-namespace gtx {
-	cocos2d::SpriteFrame* createSpriteFrameFromPath(const std::string& path);
-}
-
 namespace cocosbuilder {
 
 NodeLoader::NodeLoader()
@@ -353,6 +349,26 @@ void NodeLoader::parseProperties(Node * pNode, Node * pParent, CCBReader * ccbRe
                 }
                 break;
             }
+            case CCBReader::PropertyType::NODE_REFERENCE:
+            {
+                this->parseProptypeNodeReference(pNode, pParent, ccbReader);
+                break;
+            }
+            case CCBReader::PropertyType::FLOAT_CHECK:
+            {
+                float f = ccbReader->readFloat();
+                bool enabled = ccbReader->readBool();
+                break;
+            }
+            case CCBReader::PropertyType::EFFECTS:
+            {
+                unsigned int numberOfEffects = ccbReader->readInt(false);
+                break;
+            }
+            case CCBReader::PropertyType::TOKEN_ARRAY:
+            {
+                break;
+            }
             default:
                 ASSERT_FAIL_UNEXPECTED_PROPERTYTYPE(type);
                 break;
@@ -592,13 +608,35 @@ bool NodeLoader::parsePropTypeCheck(Node * pNode, Node * pParent, CCBReader * cc
 
 SpriteFrame * NodeLoader::parsePropTypeSpriteFrame(Node * pNode, Node * pParent, CCBReader * ccbReader, const char *pPropertyName) 
 {
-    SpriteFrame *spriteFrame = nullptr;
     std::string spriteFile = ccbReader->readCachedString();
-    if (spriteFile.length() != 0)
+    std::string path = ccbReader->getCCBRootPath() + spriteFile;
+    
+    cocos2d::SpriteFrameCache* frameCache = cocos2d::SpriteFrameCache::getInstance();
+    cocos2d::SpriteFrame* spriteFrame = frameCache->getSpriteFrameByName(path);
+    
+    if (spriteFrame == nullptr)
     {
-		spriteFile = ccbReader->getCCBRootPath() + spriteFile;
-		spriteFrame = gtx::createSpriteFrameFromPath(spriteFile);
+        int slashpos = path.rfind('/');
+        std::string filename = path.substr(slashpos + 1, path.length());
+        
+        spriteFrame = frameCache->getSpriteFrameByName(filename);
+        if(spriteFrame == nullptr)
+        {
+            spriteFrame = frameCache->getSpriteFrameByName(path);
+            if(spriteFrame == nullptr)
+            {
+                cocos2d::Texture2D *texture = cocos2d::Director::getInstance()->getTextureCache()->addImage(path);
+                if (texture != nullptr)
+                {
+                    cocos2d::Rect rect = cocos2d::Rect::ZERO;
+                    rect.size = texture->getContentSize();
+                    spriteFrame = cocos2d::SpriteFrame::createWithTexture(texture, rect);
+                    cocos2d::SpriteFrameCache::getInstance()->addSpriteFrame(spriteFrame, path);
+                }
+            }
+        }
     }
+    
     return spriteFrame;
 }
 
@@ -627,13 +665,15 @@ Animation * NodeLoader::parsePropTypeAnimation(Node * pNode, Node * pParent, CCB
 }
 
 Texture2D * NodeLoader::parsePropTypeTexture(Node * pNode, Node * pParent, CCBReader * ccbReader) {
-    SpriteFrame *spriteFrame = nullptr;
-    std::string spriteFile = ccbReader->readCachedString();
-    if (spriteFile.length() != 0)
+    std::string spriteFile = ccbReader->getCCBRootPath() + ccbReader->readCachedString();
+    
+    if (spriteFile.length() > 0)
     {
-		spriteFrame = gtx::createSpriteFrameFromPath(ccbReader->getCCBRootPath() + spriteFile);
-		if(spriteFrame != nullptr)
-			return spriteFrame->getTexture();
+        return Director::getInstance()->getTextureCache()->addImage(spriteFile.c_str());
+    }
+    else
+    {
+        return nullptr;
     }
 
     return nullptr;
@@ -671,26 +711,26 @@ Color3B NodeLoader::parsePropTypeColor3(Node * pNode, Node * pParent, CCBReader 
 	return color;
 }
     
-    Color4B NodeLoader::parsePropTypeColor4(Node * pNode, Node * pParent, CCBReader * ccbReader, const char *pPropertyName) {
-        unsigned char r = ccbReader->readFloat() * 255;
-        unsigned char g = ccbReader->readFloat() * 255;
-        unsigned char b = ccbReader->readFloat() * 255;
-        unsigned char a = ccbReader->readFloat() * 255;
-        
-        Color4B color(r, g, b, a);
-        
-        ValueMap colorMap;
-        colorMap["r"] = r;
-        colorMap["g"] = g;
-        colorMap["b"] = b;
-        colorMap["a"] = a;
-        
-        if (ccbReader->getAnimatedProperties()->find(pPropertyName) != ccbReader->getAnimatedProperties()->end())
-        {
-            ccbReader->getAnimationManager()->setBaseValue(Value(colorMap), pNode, pPropertyName);
-        }
-        return color;
+Color4B NodeLoader::parsePropTypeColor4(Node * pNode, Node * pParent, CCBReader * ccbReader, const char *pPropertyName) {
+    unsigned char r = ccbReader->readFloat() * 255;
+    unsigned char g = ccbReader->readFloat() * 255;
+    unsigned char b = ccbReader->readFloat() * 255;
+    unsigned char a = ccbReader->readFloat() * 255;
+    
+    Color4B color(r, g, b, a);
+    
+    ValueMap colorMap;
+    colorMap["r"] = r;
+    colorMap["g"] = g;
+    colorMap["b"] = b;
+    colorMap["a"] = a;
+    
+    if (ccbReader->getAnimatedProperties()->find(pPropertyName) != ccbReader->getAnimatedProperties()->end())
+    {
+        ccbReader->getAnimationManager()->setBaseValue(Value(colorMap), pNode, pPropertyName);
     }
+    return color;
+}
 
 Color4F * NodeLoader::parsePropTypeColor4FVar(Node * pNode, Node * pParent, CCBReader * ccbReader) {
     float red = ccbReader->readFloat();
@@ -1015,7 +1055,11 @@ Node * NodeLoader::parsePropTypeCCBFile(Node * pNode, Node * pParent, CCBReader 
     return ccbFileNode;
 }
 
-
+Node * NodeLoader::parseProptypeNodeReference(cocos2d::Node * pNode, cocos2d::Node * pParent, CCBReader * ccbReader)
+{
+    int uuid = ccbReader->readInt(false);
+    return nullptr;
+}
 
 void NodeLoader::onHandlePropTypePosition(Node * pNode, Node * pParent, const char* pPropertyName, Vec2 pPosition, CCBReader * ccbReader) {
     if(strcmp(pPropertyName, PROPERTY_POSITION) == 0) {
@@ -1101,9 +1145,9 @@ void NodeLoader::onHandlePropTypeInteger(Node * pNode, Node * pParent, const cha
 void NodeLoader::onHandlePropTypeIntegerLabeled(Node * pNode, Node * pParent, const char* pPropertyName, int pIntegerLabeled, CCBReader * ccbReader) {
     //ASSERT_FAIL_UNEXPECTED_PROPERTY(pPropertyName);
     if (strcmp(pPropertyName, PROPERTY_SCREEN_HALIGN) == 0) {
-        pNode->setScreenHorizontalAlign(cocos2d::ScreenHAlignment(pIntegerLabeled));
+        //pNode->setScreenHorizontalAlign(cocos2d::ScreenHAlignment(pIntegerLabeled));
     } else if (strcmp(pPropertyName, PROPERTY_SCREEN_VALIGN) == 0) {
-        pNode->setScreenVerticalAlign(cocos2d::ScreenVAlignment(pIntegerLabeled));
+        //pNode->setScreenVerticalAlign(cocos2d::ScreenVAlignment(pIntegerLabeled));
     }
 }
 

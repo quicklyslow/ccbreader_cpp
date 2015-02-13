@@ -21,10 +21,6 @@
 using namespace cocos2d;
 using namespace cocos2d::extension;
 
-namespace gtx {
-	cocos2d::SpriteFrame* createSpriteFrameFromPath(const std::string& path);
-}
-
 namespace cocosbuilder {
 
 /*************************************************************************
@@ -366,7 +362,7 @@ bool CCBReader::readHeader()
     }
 
     /* Read version. */
-    int version = this->readInt(false);
+    int version = this->readIntOLD(false);
     if(version != CCB_VERSION) {
         log("WARNING! Incompatible ccbi file version (file: %d reader: %d)", version, CCB_VERSION);
         return false;
@@ -436,8 +432,45 @@ void CCBReader::alignBits() {
         this->_currentByte++;
     }
 }
-
+    
+static inline ptrdiff_t readVariableLengthIntFromArray(const uint8_t* buffer, uint32_t * value) {
+    const uint8_t* ptr = buffer;
+    uint32_t b;
+    uint32_t result;
+    
+    b = *(ptr++); result  = (b & 0x7F)      ; if (!(b & 0x80)) goto done;
+    b = *(ptr++); result |= (b & 0x7F) <<  7; if (!(b & 0x80)) goto done;
+    b = *(ptr++); result |= (b & 0x7F) << 14; if (!(b & 0x80)) goto done;
+    b = *(ptr++); result |= (b & 0x7F) << 21; if (!(b & 0x80)) goto done;
+    b = *(ptr++); result |=  b         << 28; if (!(b & 0x80)) goto done;
+    
+done:
+    *value = result;
+    return ptr - buffer;
+}
+    
 int CCBReader::readInt(bool pSigned) {
+    unsigned int value = 0;
+    this->_currentByte += readVariableLengthIntFromArray(this->_bytes + this->_currentByte, &value);
+    
+    int num = 0;
+    
+    if (pSigned)
+    {
+        if (value & 0x1)
+            num = -(int)((value+1) >> 1);
+        else
+            num = (int)(value >> 1);
+    }
+    else
+    {
+        num = (int)value;
+    }
+    
+    return num;
+}
+
+int CCBReader::readIntOLD(bool pSigned) {
     // Read encoded int
     int numBits = 0;
     while(!this->getBit()) {
@@ -515,8 +548,7 @@ float CCBReader::readFloat()
 
 std::string CCBReader::readCachedString()
 {
-    int n = this->readInt(false);
-    return this->_stringCache[n];
+    return this->_stringCache[this->readInt(false)];
 }
 
 Node * CCBReader::readNodeGraph(Node * pParent)
@@ -805,13 +837,36 @@ CCBKeyframe* CCBReader::readKeyframe(PropertyType type)
     }
     else if (type == PropertyType::SPRITEFRAME)
     {
+        std::string spriteSheet = readCachedString();
         std::string spriteFile = readCachedString();
-		if(spriteFile.length() != 0)
-		{
-			SpriteFrame* spriteFrame = gtx::createSpriteFrameFromPath(_CCBRootPath + spriteFile);
-			if(spriteFrame != nullptr)
-				keyframe->setObject(spriteFrame);
-		}
+        
+        SpriteFrame* spriteFrame;
+        
+        if (spriteSheet.length() == 0)
+        {
+            spriteFile = _CCBRootPath + spriteFile;
+            
+            Texture2D *texture = Director::getInstance()->getTextureCache()->addImage(spriteFile.c_str());
+            Rect bounds = Rect(0, 0, texture->getContentSize().width, texture->getContentSize().height);
+            
+            spriteFrame = SpriteFrame::createWithTexture(texture, bounds);
+        }
+        else
+        {
+            spriteSheet = _CCBRootPath + spriteSheet;
+            SpriteFrameCache* frameCache = SpriteFrameCache::getInstance();
+            
+            // Load the sprite sheet only if it is not loaded
+            if (_loadedSpriteSheets.find(spriteSheet) == _loadedSpriteSheets.end())
+            {
+                frameCache->addSpriteFramesWithFile(spriteSheet.c_str());
+                _loadedSpriteSheets.insert(spriteSheet);
+            }
+            
+            spriteFrame = frameCache->getSpriteFrameByName(spriteFile.c_str());
+        }
+        
+        keyframe->setObject(spriteFrame);
     }
     
     if (!value.isNull())
@@ -904,6 +959,8 @@ bool CCBReader::readSequences()
     auto& sequences = _animationManager->getSequences();
     
     int numSeqs = readInt(false);
+    bool hasPhysicsBodies = readBool();
+    bool hasPhysicsNodes = readBool();
     
     for (int i = 0; i < numSeqs; i++)
     {
